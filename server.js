@@ -5,6 +5,10 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const sequelize = require('./database'); 
+const Product = require('./models/Product'); 
+const Cart = require('./models/Cart'); 
+
 const app = express();
 const port = 3000;
 
@@ -13,6 +17,23 @@ app.use(bodyParser.json());
 
 
 app.use('/uploads', express.static('uploads'));
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connected to MySQL with Sequelize');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
+
+
+sequelize.sync()
+  .then(() => {
+    console.log('Database & tables created!');
+  })
+  .catch((error) => {
+    console.error('Error creating database & tables:', error);
+  });
 
 const db = mysql.createConnection({
   host: 'localhost',
